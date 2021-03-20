@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.minos.oa.dao.LeaveFormDao">
+
+    <insert id="insert" parameterType="com.minos.oa.entity.LeaveForm"
+            useGeneratedKeys="true" keyProperty="formId" keyColumn="form_id">
+        INSERT INTO `imooc-oa`.adm_leave_form (employee_id, form_type, start_time, end_time, reason, create_time, state)
+        VALUES (#{employeeId}, #{formType}, #{startTime}, #{endTime}, #{reason}, #{createTime}, #{state})
+    </insert>
+
+    <select id="selectByParams" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT f.*, e.name, d.*
+        FROM adm_leave_form f,
+             adm_process_flow pf,
+             adm_employee e,
+             adm_department d
+        WHERE f.form_id = pf.form_id
+          AND f.employee_id = e.employee_id
+          AND e.department_id = d.department_id
+          AND pf.state = #{pf_state}
+          AND pf.operator_id = #{pf_operator_id}
+    </select>
+
+    <select id="selectById" parameterType="Long" resultType="com.minos.oa.entity.LeaveForm">
+        SELECT *
+        FROM adm_leave_form
+        WHERE form_id = #{value}
+    </select>
+
+    <update id="update" parameterType="com.minos.oa.entity.LeaveForm">
+        UPDATE `imooc-oa`.adm_leave_form t
+        SET t.employee_id = #{employeeId},
+            t.form_type   = #{formType},
+            t.start_time  = #{startTime},
+            t.end_time    = #{endTime},
+            t.reason      = #{reason},
+            t.create_time = #{createTime},
+            t.state       = #{state}
+        WHERE t.form_id = #{formId}
+    </update>
+
+</mapper>
